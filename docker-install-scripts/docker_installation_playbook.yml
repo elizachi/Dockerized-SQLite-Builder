@@ -1,0 +1,15 @@
+---
+- name: Установка Docker на Debian 11
+  hosts: all
+  become: yes
+  tasks:
+    - name: Копирование Bash-скрипта на виртуальную машину
+      copy: src=install_docker.sh dest=/home/vagrant mode=0777
+
+    - name: Запуск Bash-скрипта на виртуальной машине
+      command: sh /home/vagrant/install_docker.sh
+
+    - name: Удаление Bash-скрипта с виртуальной машины
+      file:
+        path: /home/vagrant/install_docker.sh
+        state: absent

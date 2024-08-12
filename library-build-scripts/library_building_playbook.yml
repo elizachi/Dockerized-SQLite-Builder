@@ -1,0 +1,35 @@
+---
+- name: Компиляция библиотеки в Docker-контейнере
+  hosts: all
+  become: yes
+  tasks:
+    - name: Создание директории /task
+      file:
+        path: task
+        state: directory
+
+    - name: Копирование Dockerfile с хост-машины на виртуальную машину
+      copy:
+        src: ../Dockerfile
+        dest: task
+
+    - name: Копирование папки library с исходными файлами
+      copy:
+        src: ../library
+        dest: task
+
+    - name: Создание контейнера
+      docker_image:
+        name: library-env-container
+        tag: latest
+        source: build
+        build:
+          path: task
+
+    - name: Запуск контейнера
+      docker_container:
+        name: library-env
+        image: library-env-container
+        state: started
+        restart_policy: always
+
